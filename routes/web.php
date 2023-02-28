@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MatkulController;
 use Illuminate\Support\Facades\Route;
 use \App\Models\Matkul;
 use Illuminate\Http\Request;
@@ -16,51 +17,14 @@ use Symfony\Contracts\Service\Attribute\Required;
 |
 */
 
-Route::get('/', function () {
-    return view('index', [
-        "data_matkul" => Matkul::all()
-    ]);
-});
+Route::get('/', [MatkulController::class, 'home']);
 
-Route::get('/create', function () {
-    return view('create');
-});
+Route::get('/create', [MatkulController::class, 'create']);
 
-Route::post('/create', function (Request $req) {
-    $req->validate([
-        'input_matkul' => 'required|max:10',
-        'sks_matkul' => 'required|integer'
-    ]);
-    Matkul::create([
-        'nama' => $req->input_matkul,
-        'sks' => $req->sks_matkul
-    ]);
+Route::post('/create', [MatkulController::class, 'post_create']);
 
-    return redirect('/');
-});
+Route::get('/edit/{id}', [MatkulController::class, 'edit_slug']);
 
-Route::get('/edit/{id}', function ($id) {
-    return view('edit', [
-        "data" => Matkul::find($id)
-    ]);
-});
+Route::put('/edit', [MatkulController::class, 'edit']);
 
-Route::put('/edit', function (Request $req) {
-    $req->validate([
-        'input_matkul' => 'required|max:10',
-        'sks_matkul' => 'required|integer'
-    ]);
-
-    Matkul::find($req->id_hidden)->update([
-        "nama" => $req->input_matkul,
-        "sks" => $req->sks_matkul
-    ]);
-
-    return redirect('/');
-});
-
-Route::delete('/delete', function (Request $req) {
-    Matkul::find($req->id)->delete();
-
-    return redirect('/');
-});
+Route::delete('/delete', [MatkulController::class, 'delete']);
